@@ -22,4 +22,12 @@ git push origin main
 
 ## Ambiente virtual (conda)
 
+```
+conda activate env_fundamentos
+```
+
+```
+conda env update
+```
+
 ## Editor de codigo (vscode)
