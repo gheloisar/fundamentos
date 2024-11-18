@@ -56,7 +56,7 @@ def extrair_infos(link):
         print('#'*5)
 
 def main():
-    url = "https://www.gov.br/mre/pt-br/canais_atendimento/imprensa/notas-a-imprensa/notas-a-imprensa?b_start:int="
+    url = "https://pressroom.oecs.int/"
     links = montar_urls(url,pag_inicial = 0,pag_final = 120)
     for link in links:
         extrair_infos(link)

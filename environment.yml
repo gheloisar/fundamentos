@@ -8,3 +8,6 @@ dependencies:
   - pandas
   - beautifulsoup4
   - httpx
+  - tinydb
+  - python-dotenv
+  
