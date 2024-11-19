@@ -10,4 +10,7 @@ dependencies:
   - httpx
   - tinydb
   - python-dotenv
+  - rich
+  - selenium
+  - webdriver-manager
   
