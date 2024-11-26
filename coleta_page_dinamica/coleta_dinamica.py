@@ -11,7 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 
-def acessar_pagina_dinamica(link, navegador = 'chrome', tempo_espera = 3):
+def acessar_pagina_dinamica(link, navegador = 'chrome', tempo_espera = 10):
     if navegador == "chrome":
         pagina = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
     elif navegador == "edge":
@@ -25,9 +25,10 @@ def acessar_pagina_dinamica(link, navegador = 'chrome', tempo_espera = 3):
 def encontrar_botao(pagina, xpath):
     while True:
         try:
-            botao = WebDriverWait(pagina, 5).until(EC.element_to_be_clickable((By.XPATH, xpath)))
+            print("clique_botao")
+            botao = WebDriverWait(pagina, 10).until(EC.element_to_be_clickable((By.XPATH, xpath)))
             botao.click()
-            sleep(3)
+            sleep(10)
         except:
             print("botão não encontrado")
             break
@@ -45,3 +46,16 @@ def clicar_botao_01(link, xpath, navegador, tempo_espera):
     bs = webscrapping_bs(pagina)
     pagina.quit()
     return bs
+
+
+def main():
+    link = "https://pressroom.oecs.int/"
+    xpath = ".//span[text()='Load more']"
+    pagina = acessar_pagina_dinamica(link, navegador="chrome", tempo_espera=10)
+    botao = encontrar_botao(pagina, xpath)
+    bs = webscrapping_bs(pagina)
+    pagina.quit()
+
+
+if __name__=="__main__":
+    main()
