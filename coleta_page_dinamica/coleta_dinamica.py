@@ -1,5 +1,6 @@
 import os
 from bs4 import BeautifulSoup
+import httpx 
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService # webdriver_manager
@@ -11,6 +12,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
+
+def acessar_pagina(link):
+    pagina = httpx.get(link)
+    bs = BeautifulSoup(pagina.text, "html.parser")
+    return(bs)
 
 def acessar_pagina_dinamica(link, navegador = 'chrome', tempo_espera = 10):
     if navegador == "chrome":
@@ -50,19 +56,54 @@ def webscrapping_local(dir_html):
             with open(dir_arquivo, "r", encoding="utf-8") as arquivo:
                 conteudo =arquivo.read()
             bs = BeautifulSoup(conteudo, "html.parser")
-            # print(bs)
+            #print(bs)
             extrair_infos(bs)
 
 
-def extrair_infos(pagina):
+def extrair_infos(bs):
     # print(pagina)
-    noticias = pagina.find("div", attrs={"class":"StoriesList_storiesContainer__yVALX StoriesList_stacked___F3Yo"}).find_all("div", attrs={"class":"StoryCard_container__KVQRO StoryCard_boxed__fZPBX StoryCard_vertical__0C6ha"})
+    noticias = bs.find("div", attrs={"class":"StoriesList_storiesContainer__yVALX StoriesList_stacked___F3Yo"}).find_all("div", attrs={"class":"StoryCard_container__KVQRO StoryCard_boxed__fZPBX StoryCard_vertical__0C6ha"})
     # print(noticias)
     # TODO: tentar gerar todos os htmls do clicar "Load more"
     # TODO: coletar todas as informações das notícias (Título, data, tag, subtítulo, autoria e parágrafos)
     for noticia in noticias:
         link = "https://pressroom.oecs.int"+noticia.a["href"]
+        titulo = noticia.find('h2').text.strip()
+        data = noticia.find('time').text.strip()
+        tag = noticia.find("span", attrs={"class": "Badge_badge__YfgzN Badge_small__gt79M Badge_outline__YlUOD"}) 
+        tag_texto = tag.get_text(strip=True) if tag else "Tag não encontrada"
+        subtitulo = noticia.find("a", attrs={"class": "StoryCard_subtitleLink__F_bW0"}) 
+        subtitulo_texto = subtitulo.get_text(strip=True) if subtitulo else "Subtítulo não encontrado"
+        conteudo = acessar_pagina_dinamica(link)
+        paragrafos = []
+
+        lista_tag_p = conteudo.find_elements(By.CLASS_NAME,"styles_paragraph__GiKq6")
+
+        for paragrafo in lista_tag_p:
+            tag_p = paragrafo.text
+            paragrafos.append(tag_p)
+
+        autorias = []
+
+        lista_autoria = conteudo.find_elements(By.CLASS_NAME,"prezly-slate-contact__name")   
+        
+        for autoria in lista_autoria:
+            autores = autoria.text
+            autorias.append(autores)
+
         print(link)
+        print("")
+        print(titulo)
+        print("")
+        print(data)
+        print("")
+        print(tag_texto)
+        print("")
+        print(subtitulo_texto)
+        print(paragrafos)
+        print(autorias)
+        print("#"*8)
+
 
 
 def webscrapping_bs(pagina):
@@ -98,3 +139,5 @@ def main():
 if __name__=="__main__":
     # main()
     main_02()
+
+    #https://www.youtube.com/watch?v=CR_1lxzSuHw - variável de ambiente e inserção do json
